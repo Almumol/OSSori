@@ -38,3 +38,10 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### YAML ###
+src/test/resources/application.yml
+src/main/resources/application-local.yml
+
+### QueryDSL ###
+**/src/main/generated
