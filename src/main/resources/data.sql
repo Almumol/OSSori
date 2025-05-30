@@ -1,0 +1,5 @@
+INSERT INTO project (id, name, description, github_link, counting_star, issue_count, contribution_guide, issue_frequency, time_to_merge, pull_request_frequency, unique_contributors, star_difference, first_response_time_of_pull_request
+) VALUES (1, 'flutter', '뭐 대충 모바일 네이티브 만드는 거였나', 'https://github.com/flutter/flutter', 171000, 5000, 'https://ossori.s3.ap-northeast-2.amazonaws.com/contributing/flutter.md', 2.5, 5.2, 1.8, 30, 15, 2.3),
+         (2, 'kubernetes', '뭐 대충 도커 관련된 거', 'https://github.com/kubernetes/kubernetes', 115000, 1900, 'https://ossori.s3.ap-northeast-2.amazonaws.com/contributing/kubernetes.md', 1.2, 4.7, 0.9, 12, 5, 1.5),
+         (3, 'pinpoint', '뭐 대충 네이버에서 만든거', 'https://github.com/pinpoint-apm/pinpoint', 13600, 425, 'https://ossori.s3.ap-northeast-2.amazonaws.com/contributing/pinpoint.md', 3.0, 3.1, 2.2, 25, 20, 3.8),
+         (4, 'tensorflow', '뭐 대충 거', 'https://github.com/tensorflow/tensorflow', 190000, 887, 'https://ossori.s3.ap-northeast-2.amazonaws.com/contributing/tensorflow.md', 0.8, 2.9, 0.5, 8, 30, 2.0);
