@@ -4,6 +4,7 @@
     pull_request:
       branches:
         - 'develop'
+        - 'main'
       types:
         - opened
         - synchronize
