@@ -28,7 +28,7 @@ data class Project(
         val issueCount: Long,
 
         // CONTRIBUTING.md
-        val contributionGuide: String? = null,
+        val contributionGuideKey: String? = null,
 
         // 이슈 생성 빈도
         @Column(nullable = false)
