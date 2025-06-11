@@ -7,8 +7,7 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly("com.h2database:h2")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation(project(":app"))
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
