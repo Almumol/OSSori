@@ -8,7 +8,9 @@ plugins {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":infra"))
+
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("com.mysql:mysql-connector-j")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-web")
