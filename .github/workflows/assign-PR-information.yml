@@ -1,0 +1,85 @@
+name: Assign PR Milestone, Assignee, Reviewers
+
+on:
+  pull_request:
+    branches:
+      - 'develop'
+    types:
+      - opened
+      - reopened
+
+permissions:
+  pull-requests: write
+  contents: write
+  issues: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      AUTHOR: ${{ github.event.pull_request.user.login }}
+      PR_DATE: ${{ github.event.pull_request.created_at }}
+
+    steps:
+      - name: Assign milestone
+        run: |
+          echo "PR 생성일: $PR_DATE"
+
+          MILESTONES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$REPO/milestones?state=open&per_page=100&sort=due_on&direction=desc")
+
+          MATCHING_ID=$(echo "$MILESTONES" | jq -r --arg PR_DATE "$PR_DATE" '
+            .[] 
+            | select(.due_on != null) 
+            | . as $milestone 
+            | ($milestone.due_on | fromdateiso8601) as $end
+            | ( $end - (60*60*24*20) ) as $start
+            | ( $PR_DATE | fromdateiso8601 ) as $date
+            | select($start <= $date and $end >= $date)
+            | $milestone.number' | head -n 1)
+
+          if [[ -z "$MATCHING_ID" ]]; then
+            echo "해당 날짜에 맞는 마일스톤이 없습니다."
+            exit 0
+          fi
+
+          echo "매칭된 마일스톤 ID: $MATCHING_ID"
+
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues/$PR_NUMBER" \
+            -d "{\"milestone\": $MATCHING_ID}"
+
+      - name: Assign assignee
+        run: |
+          echo "작성자: $AUTHOR"
+
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues/$PR_NUMBER" \
+            -d "{\"assignees\": [\"$AUTHOR\"]}"
+
+      - name: Assign reviewers
+        run: |
+          BACKEND=("hjk0761" "jminkkk" "slimsha2dy")
+          REVIEWERS=()
+          for USER in "${BACKEND[@]}"; do
+            if [[ "$USER" != "$AUTHOR" ]]; then
+              REVIEWERS+=("$USER")
+            fi
+          done
+          REVIEWERS_JSON=$(jq -n --argjson arr "$(printf '%s\n' "${REVIEWERS[@]}" | jq -R . | jq -s .)" '$arr')
+
+          echo "지정할 리뷰어: $REVIEWERS_JSON"
+
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/requested_reviewers" \
+            -d "{\"reviewers\": $REVIEWERS_JSON}"
+
