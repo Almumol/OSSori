@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":core"))
     implementation(project(":app"))
     implementation(project(":infra"))
 
