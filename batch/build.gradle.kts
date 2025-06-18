@@ -7,9 +7,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":app"))
-    implementation(project(":infra"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:infra"))
+    implementation(project(":core:client"))
 
     implementation("org.springframework.boot:spring-boot-starter-batch")
     testImplementation("org.springframework.batch:spring-batch-test")

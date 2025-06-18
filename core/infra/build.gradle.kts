@@ -7,6 +7,9 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
