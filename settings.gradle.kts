@@ -3,9 +3,9 @@ plugins {
 }
 rootProject.name = "OSSori"
 include(
-    ":api",
-    ":batch",
-    ":core:domain",
-    ":core:client",
-    ":core:infra"
+    ":module-api",
+    ":module-batch",
+    ":module-core:module-domain",
+    ":module-core:module-client",
+    ":module-core:module-infra"
 )

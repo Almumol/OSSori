@@ -7,8 +7,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core"))
-
     runtimeOnly("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
 
