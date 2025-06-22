@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":module-core:module-domain"))
+
     testImplementation(kotlin("test"))
 }
 
