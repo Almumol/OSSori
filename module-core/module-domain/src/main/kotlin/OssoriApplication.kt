@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class OsSoriApplication
+class OssoriApplication
 
 fun main(args: Array<String>) {
-	runApplication<OsSoriApplication>(*args)
+    runApplication<OssoriApplication>(*args)
 }
