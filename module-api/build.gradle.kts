@@ -1,5 +1,9 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.jpa")
+    kotlin("plugin.spring")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
 }
 
 group = "com.almumol"
@@ -10,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":module-core"))
+    implementation(project(":module-core:module-domain"))
 
     testImplementation(kotlin("test"))
 }
@@ -18,6 +22,11 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    enabled = false
 }
