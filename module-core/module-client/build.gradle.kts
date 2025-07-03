@@ -1,5 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
 }
 
 group = "com.almumol"
@@ -20,4 +23,8 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    enabled = false
 }
