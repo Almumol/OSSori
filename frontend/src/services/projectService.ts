@@ -1,5 +1,6 @@
 import { ProjectsResponse, ProjectDetail, ProjectSortOption, ProjectSummary } from '../types';
 import { mockProjects, mockProjectDetails } from '../mocks/projectData';
+import api from './api';
 
 // Cache for projects data
 let projectsCache: Record<ProjectSortOption, ProjectSummary[]> = {
@@ -26,7 +27,7 @@ const sortProjects = (projects: ProjectSummary[], sort?: ProjectSortOption) => {
   });
 };
 
-export const projectService = {
+export const projectService = {  
   // Get all projects with optional sorting
   getProjects: async (sort: ProjectSortOption = 'countingStar'): Promise<ProjectsResponse> => {
     // Return cached data if available
@@ -39,11 +40,8 @@ export const projectService = {
     // Simulate API delay only for first load
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const response = await fetch(`http://localhost:8080/api/v1/projects/`);
-    if (!response.ok) throw new Error('Failed to fetch project');
-    const data = await response.json();
-    
-    const sortedProjects = sortProjects(data.projects, sort);
+    const response = await api.get(`/v1/projects/`);
+    const sortedProjects = sortProjects(response.data.projects, sort);
     projectsCache[sort] = sortedProjects;
 
     return {
@@ -53,9 +51,8 @@ export const projectService = {
 
   // Get project details by ID
   getProjectById: async (id: number): Promise<ProjectDetail> => {
-    const response = await fetch(`http://localhost:8080/api/v1/projects/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch project');
-    return response.json();
+    const response = await api.get(`/v1/projects/${id}`);
+    return response.data;
   },
 
   // Clear cache (useful for testing)
