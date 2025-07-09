@@ -12,7 +12,13 @@ export const mockProjects: ProjectSummary[] = [
     ],
     countingStar: 203400,
     issueCount: 1248,
-    activityRate: 0.98
+    activityRate: 0.98,
+    issueFrequency: 1.2,
+    timeToMerge: 2.5,
+    pullRequestFrequency: 0.8,
+    uniqueContributors: 10,
+    starDifference: 5,
+    firstResponseTimeOfPullRequest: 1.1
   },
   {
     id: 2,
@@ -25,7 +31,13 @@ export const mockProjects: ProjectSummary[] = [
     ],
     countingStar: 178300,
     issueCount: 987,
-    activityRate: 0.92
+    activityRate: 0.92,
+    issueFrequency: 1.0,
+    timeToMerge: 3.0,
+    pullRequestFrequency: 0.9,
+    uniqueContributors: 8,
+    starDifference: 3,
+    firstResponseTimeOfPullRequest: 1.5
   },
   {
     id: 3,
@@ -38,7 +50,13 @@ export const mockProjects: ProjectSummary[] = [
     ],
     countingStar: 152900,
     issueCount: 756,
-    activityRate: 0.95
+    activityRate: 0.95,
+    issueFrequency: 1.1,
+    timeToMerge: 2.0,
+    pullRequestFrequency: 0.85,
+    uniqueContributors: 12,
+    starDifference: 4,
+    firstResponseTimeOfPullRequest: 1.2
   },
   {
     id: 4,
@@ -51,7 +69,13 @@ export const mockProjects: ProjectSummary[] = [
     ],
     countingStar: 101200,
     issueCount: 1543,
-    activityRate: 0.89
+    activityRate: 0.89,
+    issueFrequency: 1.3,
+    timeToMerge: 3.5,
+    pullRequestFrequency: 0.7,
+    uniqueContributors: 7,
+    starDifference: 2,
+    firstResponseTimeOfPullRequest: 1.8
   },
   {
     id: 5,
@@ -64,7 +88,13 @@ export const mockProjects: ProjectSummary[] = [
     ],
     countingStar: 98700,
     issueCount: 876,
-    activityRate: 0.94
+    activityRate: 0.94,
+    issueFrequency: 1.1,
+    timeToMerge: 2.2,
+    pullRequestFrequency: 0.95,
+    uniqueContributors: 15,
+    starDifference: 6,
+    firstResponseTimeOfPullRequest: 1.0
   }
 ];
 

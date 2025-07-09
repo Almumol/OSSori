@@ -20,6 +20,12 @@ export interface ProjectSummary {
   countingStar: number;
   issueCount: number;
   activityRate: number;
+  issueFrequency: number;
+  timeToMerge: number;
+  pullRequestFrequency: number;
+  uniqueContributors: number;
+  starDifference: number;
+  firstResponseTimeOfPullRequest: number;
 }
 
 // Detailed project information

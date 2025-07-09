@@ -17,6 +17,7 @@ import {
 import { styled } from '@mui/material/styles';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useProjectDetail } from '../hooks/useProjectDetail';
+import MarkdownViewer from '../components/MarkdownViewer';
 
 // Create custom theme to match the design system
 const theme = createTheme({
@@ -144,6 +145,40 @@ const DetailSkeleton: React.FC = () => (
   </>
 );
 
+// Helper for each stat item
+const StatItem = ({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: React.ReactNode;
+  color?: string;
+}) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      minWidth: 120,
+      mb: 1,
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <i className={icon} style={{ fontSize: 20, color: color || '#888', marginRight: 8 }} />
+      <Typography variant="subtitle2" color="text.secondary">
+        {label}
+      </Typography>
+    </Box>
+    <Typography variant="h6" sx={{ fontWeight: 700, ml: 1 }}>
+      {value}
+    </Typography>
+  </Box>
+);
+
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { project, loading, error } = useProjectDetail(id ? parseInt(id, 10) : 0);
@@ -187,86 +222,100 @@ const ProjectDetailPage: React.FC = () => {
                     ))}
                   </Stack>
                 </Box>
-
-                <Box sx={{ mb: 4 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Project Statistics
-                  </Typography>
-                  <Stack 
-                    direction={{ xs: 'column', sm: 'row' }} 
-                    spacing={{ xs: 2, sm: 4 }}
-                    sx={{ 
-                      '& > div': {
-                        p: 3,
-                        bgcolor: '#F9FAFB',
-                        borderRadius: 1,
-                        flex: 1,
-                      }
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                        Stars
+                <Stack
+                  direction={{ xs: 'column', md: 'row' }}
+                  spacing={4}
+                  sx={{ mb: 4 }}
+                >
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ mb: 4 }}>
+                      <Typography variant="h6" gutterBottom>
+                        기여 가이드
                       </Typography>
-                      <Typography variant="h6" color="primary">
-                        {project.countingStar.toLocaleString()}
-                      </Typography>
+                      <MarkdownViewer url={project.contributionGuide} />
                     </Box>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                        Issues
+                    <Box sx={{ mb: 4 }}>
+                      <Typography variant="h6" gutterBottom>
+                        Links
                       </Typography>
-                      <Typography variant="h6" color="primary">
-                        {project.issueCount.toLocaleString()}
-                      </Typography>
+                      <Stack spacing={3} direction="row" justifyContent="space-between">
+                        <Button
+                          component={RouterLink}
+                          to={project.githubLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startIcon={<i className="ri-github-fill" />}
+                          sx={{ mb: 4 }}
+                          variant="outlined"
+                        >
+                          Github Repository
+                        </Button>
+                        <Button
+                          component={RouterLink}
+                          to={project.githubLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startIcon={<i className="ri-global-line" />}
+                          sx={{ mb: 4 }}
+                          variant="outlined"
+                        >
+                          공식 웹사이트
+                        </Button>
+                        <Button
+                          component={RouterLink}
+                          to={project.githubLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startIcon={<i className="ri-book-2-line" />}
+                          sx={{ mb: 4 }}
+                          variant="outlined"
+                        >
+                          문서
+                        </Button>
+                        {project.contributionGuide && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            href={project.contributionGuide}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View Contribution Guide
+                          </Button>
+                        )}
+                      </Stack>
                     </Box>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                        Activity Rate
-                      </Typography>
-                      <Typography variant="h6" color="primary">
-                        {(project.activityRate * 100).toFixed(0)}%
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </Box>
-
-                <Divider sx={{ my: 4 }} />
-
-                <Box sx={{ mb: 4 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Links
-                  </Typography>
-                  <Stack spacing={2}>
-                    <Link
-                      href={project.githubLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: 1,
-                        color: 'primary.main',
-                        '&:hover': {
-                          color: 'primary.dark',
-                        }
-                      }}
-                    >
-                      <i className="ri-github-fill" /> GitHub Repository
-                    </Link>
-                    {project.contributionGuide && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        href={project.contributionGuide}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                  </Box>
+                  
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ mb: 4 }}>
+                      <Stack
+                        direction={{ xs: 'column' }}
+                        spacing={1}
+                        sx={{
+                          bgcolor: '#F9FAFB',
+                          borderRadius: 2,
+                          p: 3,
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-between',
+                        }}
                       >
-                        View Contribution Guide
-                      </Button>
-                    )}
-                  </Stack>
-                </Box>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+                          프로젝트 통계
+                        </Typography>
+                        <StatItem icon="ri-star-fill" label="스타" value={project.countingStar?.toLocaleString()} color="#FCD34D" />
+                        <StatItem icon="ri-error-warning-fill" label="이슈" value={project.issueCount?.toLocaleString()} color="#F87171" />
+                        <StatItem icon="ri-bar-chart-2-fill" label="이슈 빈도" value={project.issueFrequency} color="#6366F1" />
+                        <StatItem icon="ri-time-fill" label="평균 PR 반영" value={project.timeToMerge + '일'} color="#F59E42" />
+                        <StatItem icon="ri-bar-chart-fill" label="PR 빈도" value={project.pullRequestFrequency} color="#6366F1" />
+                        <StatItem icon="ri-user-add-fill" label="기여자 수" value={project.uniqueContributors} color="#10B981" />
+                        <StatItem icon="ri-arrow-up-s-fill" label="스타 증감" value={project.starDifference} color="#F59E42" />
+                        <StatItem icon="ri-timer-flash-fill" label="첫 PR 응답(일)" value={project.firstResponseTimeOfPullRequest} color="#A78BFA" />
+                      </Stack>
+                    </Box>
+                  </Box>
+                </Stack>
+                <Divider sx={{ my: 4 }} />
               </StyledPaper>
             </>
           ) : null}
