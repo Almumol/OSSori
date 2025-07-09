@@ -227,6 +227,8 @@ const ProjectsPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<ProjectSortOption>('countingStar');
   const { projects, loading, error } = useProjects(sortBy);
 
+  const projectList = projects?.projects ?? [];
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
@@ -239,7 +241,7 @@ const ProjectsPage: React.FC = () => {
                 value={sortBy}
                 label="Sort by"
                 onChange={(e) => setSortBy(e.target.value as ProjectSortOption)}
-                disabled={loading && projects.length === 0}
+                disabled={loading && projectList.length === 0}
               >
                 <MenuItem value="countingStar">Stars</MenuItem>
                 <MenuItem value="issueCount">Issues</MenuItem>
@@ -255,14 +257,14 @@ const ProjectsPage: React.FC = () => {
           ) : (
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={3}>
-                {loading && projects.length === 0 ? (
+                {loading && projectList.length === 0 ? (
                   <>
                     {[...Array(6)].map((_, index) => (
                       <ProjectSkeleton key={index} />
                     ))}
                   </>
                 ) : (
-                  projects.map((project) => (
+                  projectList.map((project) => (
                     <ProjectCard key={project.id} project={project} />
                   ))
                 )}

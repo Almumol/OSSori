@@ -1,48 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
+import { useApi } from './useApi';
 import { projectService } from '../services/projectService';
-import { ProjectDetail } from '../types';
 
 export function useProjectDetail(id: number) {
-  const [project, setProject] = useState<ProjectDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchProject = useCallback(async () => {
-    try {
-      // Only show loading if we don't have data yet
-      if (!project) {
-        setLoading(true);
-      }
-
-      const data = await projectService.getProjectById(id);
-      setProject(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch project details'));
-      setProject(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [id, project]);
+  const { data, loading, error, execute } = useApi(projectService.getProjectById);
 
   useEffect(() => {
-    const fetchProject = async () => {
-      // Only show loading if we don't have data yet
-      if (!project) {
-        setLoading(true);
-      }
-
-      const data = await projectService.getProjectById(id);
-      setProject(data);
-      setError(null);
-    };
-    fetchProject();
-  }, [id]);
+    if (id) execute(id);
+  }, [id, execute]);
 
   return {
-    project,
+    project: data,
     loading,
     error,
-    refetch: fetchProject
+    refetch: () => execute(id),
   };
-} 
+}
