@@ -1,8 +1,8 @@
 package client
 
 import com.almumol.ossori.client.GithubClientProperties
-import dto.GithubRepositoriesResponse
-import dto.GithubRepositoryResponse
+import dto.response.GithubRepositoriesResponse
+import dto.response.GithubRepositoryResponse
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
