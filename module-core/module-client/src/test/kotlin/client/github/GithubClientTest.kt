@@ -1,4 +1,4 @@
-package client
+package client.github
 
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Disabled

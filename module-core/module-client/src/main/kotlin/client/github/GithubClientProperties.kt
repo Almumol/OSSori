@@ -1,4 +1,4 @@
-package com.almumol.ossori.client
+package client.github
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

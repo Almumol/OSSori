@@ -1,7 +1,9 @@
 package config
 
+import client.github.GithubResponseErrorHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.client.ClientHttpRequestFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.RestClient
 import java.time.Duration
@@ -10,13 +12,19 @@ import java.time.Duration
 class RestClientConfig {
 
     @Bean
-    fun restClient(): RestClient {
+    fun githubRestClient(): RestClient {
+        val requestFactory = simpleRequestFactory()
+        return RestClient.builder()
+            .requestFactory(requestFactory)
+            .defaultStatusHandler(GithubResponseErrorHandler())
+            .build()
+    }
+
+    private fun simpleRequestFactory(): ClientHttpRequestFactory {
         val requestFactory = SimpleClientHttpRequestFactory()
         requestFactory.setConnectTimeout(Duration.ofSeconds(2))
         requestFactory.setReadTimeout(Duration.ofSeconds(10))
 
-        return RestClient.builder()
-            .requestFactory(requestFactory)
-            .build()
+        return requestFactory
     }
 }
