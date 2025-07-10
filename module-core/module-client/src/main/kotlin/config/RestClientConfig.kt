@@ -12,7 +12,7 @@ class RestClientConfig {
     @Bean
     fun restClient(): RestClient {
         val requestFactory = SimpleClientHttpRequestFactory()
-        requestFactory.setConnectTimeout(Duration.ofSeconds(5))
+        requestFactory.setConnectTimeout(Duration.ofSeconds(2))
         requestFactory.setReadTimeout(Duration.ofSeconds(10))
 
         return RestClient.builder()
