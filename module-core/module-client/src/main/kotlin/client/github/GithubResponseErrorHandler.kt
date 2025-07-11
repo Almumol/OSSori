@@ -7,17 +7,24 @@ import org.springframework.web.client.ResponseErrorHandler
 import java.net.URI
 
 class GithubResponseErrorHandler : ResponseErrorHandler {
+
+    companion object {
+        private const val GITHUB_SERVER_ERROR = "Github Server Unavailable"
+    }
+
     override fun hasError(response: ClientHttpResponse): Boolean {
         return response.statusCode.is4xxClientError || response.statusCode.is5xxServerError
     }
 
     override fun handleError(url: URI, method: HttpMethod, response: ClientHttpResponse) {
-        if (response.statusCode.is4xxClientError) {
-            throw GithubResponseException("Status code: ${response.statusCode}, Description: ${response.body}")
+        val body = response.body.bufferedReader().readText()
+        when {
+            response.statusCode.is4xxClientError ->
+                throw GithubResponseException(response.statusCode, body)
+            response.statusCode.is5xxServerError ->
+                throw GithubResponseException(response.statusCode, GITHUB_SERVER_ERROR)
+            else ->
+                throw GithubResponseException(response.statusCode, body)
         }
-        if (response.statusCode.is5xxServerError) {
-            throw GithubResponseException("Github Server Unavailable")
-        }
-        throw GithubResponseException(response.body.toString())
     }
 }
