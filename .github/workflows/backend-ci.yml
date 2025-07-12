@@ -9,6 +9,8 @@ on:
       - opened
       - synchronize
       - reopened
+    paths-ignore:
+      - 'module-frontend/**'
 
 permissions: write-all
 
