@@ -46,10 +46,10 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: ${{ github.workspace }}/build/test-results/test/TEST-*.xml
+          files: '**/build/test-results/test/TEST-*.xml'
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          report_paths: ${{ github.workspace }}/build/test-results/test/TEST-*.xml
+          report_paths: '**/build/test-results/test/TEST-*.xml'
