@@ -45,7 +45,7 @@ jobs:
 
   build:
     needs: detach
-    if: ${{ need.detach.outputs.modules != '[]' }}
+    if: ${{ needs.detach.outputs.modules != '[]' }}
     strategy:
       matrix:
         module: ${{ fromJSON(needs.detach.outputs.modules) }}
