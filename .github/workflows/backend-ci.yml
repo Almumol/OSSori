@@ -42,7 +42,7 @@ jobs:
           echo "변경된 모듈 목록: ${MODULES[@]}"
           
           if
-            [ ${#MODULES[@] -eq 0 ]; then
+            [ ${#MODULES[@]} -eq 0 ]; then
             echo "No changed modules"
             exit 0
           fi
