@@ -15,12 +15,46 @@ on:
 permissions: write-all
 
 jobs:
+  detach:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.extract.outputs.modules }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: extract
+        name: extract changed module names
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          
+          MODULES=()
+          
+          echo "$CHANGED" | grep -q '^module-api/' && MODULES+=("module-api")
+          echo "$CHANGED" | grep -q '^module-batch/' && MODULES+=("module-batch")
+          echo "$CHANGED" | grep -q '^module-core/module-domain/' && MODULES+=("module-core:module-domain")
+          echo "$CHANGED" | grep -q '^module-core/module-client/' && MODULES+=("module-core:module-client")
+          echo "$CHANGED" | grep -q '^module-core/module-infra/' && MODULES+=("module-core:module-infra")
+
+          echo "변경된 모듈 목록: ${MODULES[@]}"
+          
+          echo "modules=$(jq -c -n --argjson mods "$(printf '%s\n' "${MODULES[@]}" | jq -R . | jq -s .)" '$mods')" >> $GITHUB_OUTPUT
+
   build:
+    needs: detach
+    strategy:
+      matrix:
+        module: ${{ fromJSON(needs.detach.outputs.modules) }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Repository checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup java 21
         uses: actions/setup-java@v4
@@ -42,16 +76,32 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and test with gradle
-        run: ./gradlew build --info
+        run: ./gradlew :${{ matrix.module }}:build --info
 
-      - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      - name: Upload test results
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          files: '**/build/test-results/test/TEST-*.xml'
+          name: test-results-${{ matrix.module }}
+          path: ${{ matrix.module }}/build/test-results/test/
+
+  report:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: test-results
+          merge-multiple: true
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v4
-        if: always()
         with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+          report_paths: test-results/**/TEST-*.xml
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: test-results/**/TEST-*.xml
