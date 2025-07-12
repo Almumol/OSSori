@@ -41,11 +41,17 @@ jobs:
 
           echo "변경된 모듈 목록: ${MODULES[@]}"
           
+          if
+            [ ${#MODULES[@] -eq 0 ]; then
+            echo "No changed modules"
+            exit 0
+          fi
+          
           echo "modules=$(jq -c -n --argjson mods "$(printf '%s\n' "${MODULES[@]}" | jq -R . | jq -s .)" '$mods')" >> $GITHUB_OUTPUT
 
   build:
     needs: detach
-    if: ${{ needs.detach.outputs.modules != '[]' }}
+    if: ${{ needs.detach.outputs.modules && needs.detach.outputs.modules != '[]' }}
     strategy:
       matrix:
         module: ${{ fromJSON(needs.detach.outputs.modules) }}
@@ -77,6 +83,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and test with gradle
+        if: ${{ matrix.module != '' }}
         run: ./gradlew :${{ matrix.module }}:build --info
 
       - name: Upload test results
