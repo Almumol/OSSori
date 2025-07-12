@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Repository checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - id: extract
         name: extract changed module names
@@ -59,6 +61,8 @@ jobs:
     steps:
       - name: Repository checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup java 21
         uses: actions/setup-java@v4
