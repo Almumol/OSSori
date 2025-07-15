@@ -6,27 +6,18 @@ plugins {
     id("io.spring.dependency-management")
 }
 
-group = "com.almumol"
-version = "0.0.1-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":module-core:module-domain"))
+    implementation(project(":module-core:module-client"))
+    implementation(project(":module-core:module-infra"))
+    implementation(project(":module-batch"))
 
-    testImplementation(kotlin("test"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-batch")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation ("com.h2database:h2")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(21)
-}
-
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    enabled = false
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    mainClass.set("OssoriApplication")
 }

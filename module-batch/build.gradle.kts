@@ -6,10 +6,12 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":module-core"))
+    implementation(project(":module-core:module-client"))
+    implementation(project(":module-core:module-domain"))
 
     implementation("org.springframework.boot:spring-boot-starter-batch")
-    testImplementation("org.springframework.batch:spring-batch-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation ("com.h2database:h2")
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {

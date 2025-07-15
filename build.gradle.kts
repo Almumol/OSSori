@@ -7,7 +7,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.almumol"
+    group = "almumol.ossori"
     version = "0.0.1-SNAPSHOT"
 
     repositories {
@@ -31,9 +31,4 @@ subprojects {
         "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit5")
         "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
     }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
 }
-

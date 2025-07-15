@@ -23,6 +23,6 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
-tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
-    mainClass.set("AppApplication")
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    enabled = false
 }
