@@ -8,6 +8,7 @@ plugins {
 dependencies {
     implementation(project(":module-core:module-client"))
     implementation(project(":module-core:module-domain"))
+    implementation(project(":module-core:module-infra"))
 
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
