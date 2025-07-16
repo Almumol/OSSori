@@ -1,6 +1,5 @@
-package client.github
+package almumol.ossori.core.client.github
 
-import almumol.ossori.core.client.github.GithubClient
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ExtendWith
@@ -13,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import kotlin.test.Test
 
 @TestConfiguration
-@ComponentScan(basePackages = ["client"])
+@ComponentScan(basePackages = ["almumol.ossori.core.client"])
 class TestConfig() {
 }
 
