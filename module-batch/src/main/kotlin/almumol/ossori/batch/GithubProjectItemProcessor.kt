@@ -24,7 +24,7 @@ class GithubProjectItemProcessor(
         val calculateMetrics = githubMetricsCalculator.calculateMetrics(repositorySummary, commits, pullRequests, contributors)
 
         return previousProject.copy(
-            countingStar = repositorySummary.countingStar,
+            countingStar = repositorySummary.stargazersCount,
             issueCount = repositorySummary.openIssuesCount,
             contributionGuideKey = contributionGuideKey,
             issueFrequency = calculateMetrics.issueCreationRate,
