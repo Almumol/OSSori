@@ -2,6 +2,7 @@ package almumol.ossori.core.client.github
 
 import almumol.ossori.core.client.dto.response.*
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
@@ -46,6 +47,11 @@ class GithubClient(
         return defaultGithubGetClient(uri)
     }
 
+    fun getReadMe(repositoryOwner: String, repositoryName: String): GithubContentResponse {
+        val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/readme"
+        return githubGetResourceClient(uri)
+    }
+
     private fun getGithubToken(): String =
         "$AUTHORIZATION_METHOD ${githubClientProperties.token}"
 
@@ -54,6 +60,16 @@ class GithubClient(
             .uri(uri)
             .accept(APPLICATION_JSON)
             //.header(AUTHORIZATION_HEADER, getGithubToken())
+            .retrieve()
+            .body(T::class.java)
+            ?: throw RuntimeException("Null response from $uri")
+    }
+
+    private inline fun <reified T> githubGetResourceClient(uri: String): T {
+        return githubRestClient.get()
+            .uri(uri)
+            .accept(APPLICATION_JSON)
+            .header(HttpHeaders.ACCEPT, "application/vnd.github+json")
             .retrieve()
             .body(T::class.java)
             ?: throw RuntimeException("Null response from $uri")
