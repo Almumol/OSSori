@@ -74,7 +74,7 @@ jobs:
 
       - name: Build and test with gradle
         if: ${{ matrix.module != '' }}
-        run: ./gradlew :${{ matrix.module }}:build --info
+        run: ./gradlew ${{ matrix.module }}:build --info
 
       - name: Save build files if executable modules
         if: contains(fromJSON(needs.detach.outputs.executables), matrix.module)
