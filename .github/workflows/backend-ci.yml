@@ -31,12 +31,12 @@ jobs:
       - name: Make scripts executable
         run: chmod +x .github/scripts/*.sh
 
-      - id: extract
-        name: extract changed module names
+      - name: extract changed module names
+        id: extract
         run: .github/scripts/extract-changed-modules.sh ${{ github.base_ref }}
 
-      - id: target
-        name: find targets
+      - name: find targets
+        id: target
         run: .github/scripts/find-dependant-modules.sh ${{ steps.extract.outputs.modules }}
 
   build:
