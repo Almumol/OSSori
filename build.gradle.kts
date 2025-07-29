@@ -69,7 +69,7 @@ tasks.register("findDependentModules") {
             moduleGraph[module]?.forEach {
                 traverse(it)
             }
-            candidates.add(module)
+            candidates.add(module.removePrefix(":"))
         }
 
         changedModules.forEach {
