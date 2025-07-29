@@ -53,5 +53,8 @@ jobs:
           for image in $(echo "${{ needs.build.outputs.images }}" | tr ',' ' ')
           do
             sudo docker pull $image
-            sudo docker compose -f ~/docker/ossori-dev-compose.yml up -d
+            name_with_registry="${image%%:*}"
+            name_with_prefix="${name_with_registry##*/}"
+            module_name="${name_with_prefix#ossori-}"
+            sudo docker compose -f ~/docker/"$module_name"/docker-compose.yml up -d
           done
