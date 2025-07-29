@@ -23,3 +23,9 @@ spring:
   sql:
     init:
       mode: always
+
+security:
+  github:
+    repository_base_url: https://api.github.com/repos
+    search_repository_base_url: https://api.github.com/search/repositories
+    token: test_pat
