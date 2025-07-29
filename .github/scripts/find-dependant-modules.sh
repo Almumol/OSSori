@@ -15,5 +15,5 @@ executables_json=$(echo "$executables" | tr ',' '\n' | jq -R . | jq -s . | jq -c
 echo "candidates_json=${candidates_json}"
 echo "executables_json=${executables_json}"
 
-echo "candidates=\"${candidates_json}\"" >> "$GITHUB_OUTPUT"
-echo "executables=\"${executables_json}\"" >> "$GITHUB_OUTPUT"
+echo "candidates=${candidates_json}" >> "$GITHUB_OUTPUT"
+echo "executables=${executables_json}" >> "$GITHUB_OUTPUT"
