@@ -10,14 +10,8 @@ output=$(./gradlew findDependentModules -PchangedModules="$1")
 echo "output=${output}"
 candidates=$(echo "$output" | grep "candidates=" | cut -d'=' -f2)
 executables=$(echo "$output" | grep "executables=" | cut -d'=' -f2)
-echo "candidates=$candidates"
-echjo "executables=$executables"
-candidates_json=$(echo "$candidates" | tr ',' '\n' | jq -R . | jq -s .)
-executables_json=$(echo "$executables" | tr ',' '\n' | jq -R . | jq -s .)
-echo "candidates_json=${candidates_json}"
-echo "executables_json=${executables_json}"
-candidates_json=$(echo "$candidates" | tr ',' '\n' | jq -R 'gsub("^\\s+|\\s+$"; "")' | jq -s .)
-executables_json=$(echo "$executables" | tr ',' '\n' | jq -R 'gsub("^\\s+|\\s+$"; "")' | jq -s .)
+candidates_json=$(echo "$candidates" | tr ',' '\n' | jq -R . | jq -s . | jq -c .)
+executables_json=$(echo "$executables" | tr ',' '\n' | jq -R . | jq -s . | jq -c .)
 echo "candidates_json=${candidates_json}"
 echo "executables_json=${executables_json}"
 
