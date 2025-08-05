@@ -3,7 +3,6 @@ package almumol.ossori.core.client.github
 import almumol.ossori.core.client.dto.response.*
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import java.time.LocalDate
@@ -25,38 +24,38 @@ class GithubClient(
 
     fun getRepositories(filterQuery: String): GithubRepositoriesResponse {
         val uri = "${githubClientProperties.searchRepositoryBaseUrl}$filterQuery"
-        return defaultGithubGetClient(uri)//?q=good-first-issues:>1+help-wanted-issues:>1
+        return getFromGithub(uri)//?q=good-first-issues:>1+help-wanted-issues:>1
     }
 
     fun getRepository(repositoryOwner: String, repositoryName: String): GithubRepositoryResponse {
         val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName"
-        return defaultGithubGetClient(uri)
+        return getFromGithub(uri)
     }
 
     fun getPullRequests(repositoryOwner: String, repositoryName: String): List<GithubPullRequestResponse> {
         val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/pulls?state=all&since=" + since
-        return defaultGithubGetClient(uri)
+        return getFromGithub(uri)
     }
 
     fun getCommits(repositoryOwner: String, repositoryName: String): List<GithubCommitResponse> {
         val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/commits?since=" + since
-        return defaultGithubGetClient(uri)
+        return getFromGithub(uri)
     }
 
     fun getContributors(repositoryOwner: String, repositoryName: String): List<GithubContributorResponse> {
         val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contributors"
-        return defaultGithubGetClient(uri)
+        return getFromGithub(uri)
     }
 
     fun getReadMe(repositoryOwner: String, repositoryName: String): GithubContentResponse {
         val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/readme"
-        return githubGetResourceClient(uri)
+        return getFromGithub(uri)
     }
 
     private fun getGithubToken(): String =
         "$AUTHORIZATION_METHOD ${githubClientProperties.token}"
 
-    private inline fun <reified T> defaultGithubGetClient(uri: String): T {
+    private inline fun <reified T> getFromGithub(uri: String): T {
         return githubRestClient.get()
             .uri(uri)
             .header(HttpHeaders.ACCEPT, GITHUB_API_MEDIA_TYPE)
