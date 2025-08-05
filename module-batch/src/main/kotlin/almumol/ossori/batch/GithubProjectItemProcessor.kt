@@ -21,18 +21,18 @@ class GithubProjectItemProcessor(
         val readMe = githubClient.getReadMe(previousProject.owner, previousProject.name)
 
         val contributionGuideKey = githubReadMeSender.saveToBucket(readMe)
-        val calculateMetrics = githubMetricsCalculator.calculateMetrics(repositorySummary, commits, pullRequests, contributors)
+        val metrics = githubMetricsCalculator.calculateMetrics(repositorySummary, commits, pullRequests, contributors)
 
         return previousProject.copy(
             countingStar = repositorySummary.stargazersCount,
             issueCount = repositorySummary.openIssuesCount,
             contributionGuideKey = contributionGuideKey,
-            issueFrequency = calculateMetrics.issueCreationRate,
-            timeToMerge = calculateMetrics.averageMergeTime,
-            pullRequestFrequency = calculateMetrics.pullRequestCreationRate,
+            issueFrequency = metrics.issueCreationRate,
+            timeToMerge = metrics.averageMergeTime,
+            pullRequestFrequency = metrics.pullRequestCreationRate,
             uniqueContributors = contributors.size.toLong(),
-            starDifference = calculateMetrics.starDifference,
-            firstResponseTimeOfPullRequest = calculateMetrics.pullRequestAverageFirstResponseTime
+            starDifference = metrics.starDifference,
+            firstResponseTimeOfPullRequest = metrics.pullRequestAverageFirstResponseTime
         )
     }
 }
