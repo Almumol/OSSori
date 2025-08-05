@@ -17,7 +17,7 @@ do
   echo "Processing $module"
   JAR_FILE=$(find artifacts/artifact-"$module" -name '*.jar' | head -n1)
   cp "$JAR_FILE" "$module".jar
-  docker build -f ./Dockerfile --build-arg MODULE="$module" --platform linux/arm64 --no-cache -t ossori/ossori-"$module":dev .
+  docker build -f ./Dockerfile --build-arg MODULE="$module" --platform linux/arm64 -t ossori/ossori-"$module":dev .
   docker push ossori/ossori-"$module":dev
   append ossori/ossori-"$module":dev
 done
