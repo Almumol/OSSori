@@ -15,6 +15,7 @@ class GithubClient(
     private val githubClientProperties: GithubClientProperties
 ) {
     companion object {
+        private const val GITHUB_API_MEDIA_TYPE = "application/vnd.github+json"
         private const val AUTHORIZATION_HEADER = "Authorization"
         private const val AUTHORIZATION_METHOD = "Bearer"
     }
@@ -58,18 +59,8 @@ class GithubClient(
     private inline fun <reified T> defaultGithubGetClient(uri: String): T {
         return githubRestClient.get()
             .uri(uri)
-            .accept(APPLICATION_JSON)
+            .header(HttpHeaders.ACCEPT, GITHUB_API_MEDIA_TYPE)
             //.header(AUTHORIZATION_HEADER, getGithubToken())
-            .retrieve()
-            .body(T::class.java)
-            ?: throw RuntimeException("Null response from $uri")
-    }
-
-    private inline fun <reified T> githubGetResourceClient(uri: String): T {
-        return githubRestClient.get()
-            .uri(uri)
-            .accept(APPLICATION_JSON)
-            .header(HttpHeaders.ACCEPT, "application/vnd.github+json")
             .retrieve()
             .body(T::class.java)
             ?: throw RuntimeException("Null response from $uri")
