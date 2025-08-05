@@ -32,3 +32,61 @@ subprojects {
         "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
     }
 }
+
+tasks.register("findDependentModules") {
+    group = "dependency"
+    description = "변경된 모듈에 의존하는 실행 모듈들을 출력합니다."
+
+    val changedModules = project.findProperty("changedModules")
+        ?.toString()
+        ?.takeIf { it.isNotBlank() }
+        ?.split(",")
+        ?.map(String::trim)
+        ?.map { if (it.startsWith(":")) it else ":$it" }
+        ?: emptyList()
+
+    doLast {
+        val moduleGraph = mutableMapOf<String, MutableSet<String>>()
+
+        rootProject.subprojects.forEach { proj ->
+            proj.configurations
+                .flatMap { it.dependencies }
+                .filterIsInstance<ProjectDependency>()
+                .forEach { dep ->
+                    val dependents = moduleGraph.getOrPut(dep.path) { mutableSetOf() }
+                    dependents.add(proj.path)
+                }
+        }
+
+        println(moduleGraph)
+
+        val visited = mutableSetOf<String>()
+        val candidates = mutableSetOf<String>()
+
+        fun traverse(module: String) {
+            if (module in visited) return
+            visited.add(module)
+            moduleGraph[module]?.forEach {
+                traverse(it)
+            }
+            candidates.add(module.removePrefix(":"))
+        }
+
+        changedModules.forEach {
+            traverse(it)
+        }
+
+        val executableModules = candidates.filter { module ->
+            val project = rootProject.project(module)
+            project.fileTree("src/main").any {
+                it.name.endsWith("Application.kt")
+            }
+        }
+
+        val candidatesString = candidates.joinToString(",")
+        val executablesString = executableModules.joinToString(",")
+
+        println("candidates=$candidatesString")
+        println("executables=$executablesString")
+    }
+}

@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       modules: ${{ steps.extract.outputs.modules }}
+      candidates: ${{ steps.target.outputs.candidates }}
+      executables: ${{ steps.target.outputs.executables }}
 
     steps:
       - name: Repository checkout
@@ -26,36 +28,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - id: extract
-        name: extract changed module names
-        run: |
-          git fetch origin ${{ github.base_ref }}
-          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-          
-          MODULES=()
-          
-          echo "$CHANGED" | grep -q '^module-api/' && MODULES+=("module-api")
-          echo "$CHANGED" | grep -q '^module-batch/' && MODULES+=("module-batch")
-          echo "$CHANGED" | grep -q '^module-core/module-domain/' && MODULES+=("module-core:module-domain")
-          echo "$CHANGED" | grep -q '^module-core/module-client/' && MODULES+=("module-core:module-client")
-          echo "$CHANGED" | grep -q '^module-core/module-infra/' && MODULES+=("module-core:module-infra")
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/*.sh
 
-          echo "변경된 모듈 목록: ${MODULES[@]}"
-          
-          if
-            [ ${#MODULES[@]} -eq 0 ]; then
-            echo "No changed modules"
-            exit 0
-          fi
-          
-          echo "modules=$(jq -c -n --argjson mods "$(printf '%s\n' "${MODULES[@]}" | jq -R . | jq -s .)" '$mods')" >> $GITHUB_OUTPUT
+      - name: extract changed module names
+        id: extract
+        run: .github/scripts/extract-changed-modules.sh ${{ github.base_ref }}
+
+      - name: find targets
+        id: target
+        run: .github/scripts/find-dependant-modules.sh ${{ steps.extract.outputs.modules }}
 
   build:
     needs: detach
-    if: ${{ needs.detach.outputs.modules && needs.detach.outputs.modules != '[]' }}
+    if: ${{ needs.detach.outputs.candidates && needs.detach.outputs.candidates != '[]' }}
     strategy:
       matrix:
-        module: ${{ fromJSON(needs.detach.outputs.modules) }}
+        module: ${{ fromJSON(needs.detach.outputs.candidates) }}
     runs-on: ubuntu-latest
 
     steps:
@@ -86,6 +75,13 @@ jobs:
       - name: Build and test with gradle
         if: ${{ matrix.module != '' }}
         run: ./gradlew :${{ matrix.module }}:build --info
+
+      - name: Save build files if executable modules
+        if: contains(fromJSON(needs.detach.outputs.executables), matrix.module)
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.module }}
+          path: ${{ matrix.module }}/build/libs/*.jar
 
       - name: Upload test results
         if: always()
