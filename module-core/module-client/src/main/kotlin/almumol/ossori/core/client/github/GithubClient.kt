@@ -17,10 +17,11 @@ class GithubClient(
         private const val GITHUB_API_MEDIA_TYPE = "application/vnd.github+json"
         private const val AUTHORIZATION_HEADER = "Authorization"
         private const val AUTHORIZATION_METHOD = "Bearer"
+        private const val OFFSET_OF_MONTH = 3L;
     }
 
-    val offsetOfMonth = 3L;
-    val since = LocalDate.now().minusMonths(offsetOfMonth).toString()
+    private val since: String
+        get() = LocalDate.now().minusMonths(OFFSET_OF_MONTH).toString()
 
     fun getRepositories(filterQuery: String): GithubRepositoriesResponse {
         val uri = "${githubClientProperties.searchRepositoryBaseUrl}$filterQuery"
