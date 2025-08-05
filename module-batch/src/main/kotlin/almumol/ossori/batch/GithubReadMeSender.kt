@@ -4,6 +4,8 @@ import almumol.ossori.core.client.dto.response.GithubContentResponse
 import org.springframework.stereotype.Component
 
 @Component
-abstract class GithubReadMeSender {
-    abstract fun saveToBucket(githubContentResponse: GithubContentResponse): String
+class GithubReadMeSender {
+    fun saveToBucket(githubContentResponse: GithubContentResponse): String {
+        throw NotImplementedError("This method is not implemented yet.")
+    }
 }

@@ -1,19 +1,17 @@
 package almumol.ossori.core.client.github
 
-import almumol.ossori.core.client.dto.response.GithubCommitResponse
-import almumol.ossori.core.client.dto.response.GithubContributorResponse
-import almumol.ossori.core.client.dto.response.GithubMetricsResponse
-import almumol.ossori.core.client.dto.response.GithubPullRequestResponse
-import almumol.ossori.core.client.dto.response.GithubRepositoryResponse
+import almumol.ossori.core.client.dto.response.*
 import org.springframework.stereotype.Component
 
 @Component
-abstract class GithubMetricsCalculator() {
+class GithubMetricsCalculator() {
 
-    abstract fun calculateMetrics(
+    fun calculateMetrics(
         repositorySummary: GithubRepositoryResponse,
         commits: List<GithubCommitResponse>,
         pullRequests: List<GithubPullRequestResponse>,
         contributors: List<GithubContributorResponse>
-    ): GithubMetricsResponse
+    ): GithubMetricsResponse {
+        throw NotImplementedError("This method is not implemented yet.")
+    }
 }
