@@ -1,9 +1,11 @@
 name: backend CD dev
 
 on:
-  push:
+  workflow_run:
+    workflows: [backend CI]
+    types: [completed]
     branches:
-      - develop
+      - 'develop'
 
 jobs:
   build:
