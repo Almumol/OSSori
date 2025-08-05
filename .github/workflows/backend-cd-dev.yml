@@ -58,5 +58,5 @@ jobs:
             module_name="${name_with_prefix#ossori-}"
             container_name="ossori-dev-${module_name}"
             sudo docker rm -f "$container_name" || true
-            sudo docker compose -f ~/docker/"$module_name"/docker-compose.yml up -d
+            sudo docker compose -f ~/docker/"$module_name"/docker-compose-dev.yml up -d
           done
