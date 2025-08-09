@@ -17,6 +17,8 @@ data class Project(
 
     val description: String,
 
+    val owner: String,
+
     @Column(nullable = false)
     val githubLink: String,
 

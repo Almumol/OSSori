@@ -34,16 +34,16 @@ class GithubClientTest(
     @Disabled
     @Test
     fun repositoryTest() {
-        val repositoryInfo = githubClient.getRepositoryInfo("Almumol", "OSSori")
+        val repositoryInfo = githubClient.getRepository("Almumol", "OSSori")
         assertNotNull(repositoryInfo)
     }
 
     @Disabled
     @Test
     fun searchRepositoryTest() {
-        var openSourceRepository = githubClient.getOpenSourceRepository("?q=good-first-issues:>0")
+        var openSourceRepository = githubClient.getRepositories("?q=good-first-issues:>0")
         assertNotNull(openSourceRepository)
-        openSourceRepository = githubClient.getOpenSourceRepository("?q=help-wanted-issues:>0")
+        openSourceRepository = githubClient.getRepositories("?q=help-wanted-issues:>0")
         assertNotNull(openSourceRepository)
     }
 }
