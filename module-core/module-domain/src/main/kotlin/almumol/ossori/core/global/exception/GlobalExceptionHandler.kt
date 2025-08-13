@@ -1,6 +1,6 @@
 package almumol.ossori.core.global.exception
 
-import com.almumol.ossori.global.exception.dto.ExceptionResponse
+import almumol.ossori.core.global.exception.dto.ExceptionResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
