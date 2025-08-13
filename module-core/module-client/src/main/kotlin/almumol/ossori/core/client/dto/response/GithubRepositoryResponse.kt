@@ -7,6 +7,7 @@ data class GithubRepositoryResponse(
     val htmlUrl: String,
     val stargazersCount: Long,
     val owner: GithubOwnerResponse,
+    val description: String,
 )
 
 data class GithubOwnerResponse(

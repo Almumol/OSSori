@@ -35,7 +35,7 @@ class GithubProjectCollector(
                 val project = Project(
                     id = 0L,
                     name = repo.name,
-                    description = repo.fullName, // 혹은 repo.description (필요시 dto에 추가)
+                    description = repo.description,
                     owner = repo.owner.login,
                     githubLink = repo.htmlUrl,
                     countingStar = repo.stargazersCount,
