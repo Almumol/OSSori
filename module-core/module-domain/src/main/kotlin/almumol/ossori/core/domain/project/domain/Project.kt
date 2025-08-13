@@ -13,11 +13,12 @@ data class Project(
     val id: Long,
 
     @Column(nullable = false, unique = true)
+    val owner: String,
+
+    @Column(nullable = false)
     val name: String,
 
     val description: String,
-
-    val owner: String,
 
     @Column(nullable = false)
     val githubLink: String,
