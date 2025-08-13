@@ -4,9 +4,9 @@ import almumol.ossori.core.domain.project.domain.Project
 import almumol.ossori.core.domain.project.service.ProjectService
 import jakarta.annotation.PostConstruct
 import lombok.RequiredArgsConstructor
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
-@Service
+@Component
 @RequiredArgsConstructor
 class GithubProjectCollector(
     private val githubClient: GithubClient,
