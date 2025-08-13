@@ -1,5 +1,6 @@
 package almumol.ossori.core.domain.project.service
 
+import almumol.ossori.core.domain.project.domain.Project
 import almumol.ossori.core.domain.project.dto.response.ProjectResponse
 import almumol.ossori.core.domain.project.dto.response.ProjectsResponse
 import almumol.ossori.core.domain.project.global.exception.BadRequestException
@@ -23,5 +24,17 @@ class ProjectService(
         val projects = projectRepository.findAll(pageable);
 
         return ProjectsResponse.from(projects);
+    }
+
+    fun hasProjectLessThan(count: Long): Boolean {
+        val projectCount = projectRepository.count()
+        return projectCount < count;
+    }
+
+    fun registerProject(project: Project) {
+        if (projectRepository.existsProjectByOwner(project.name)) {
+            throw BadRequestException("이미 존재하는 Oranization 입니다.")
+        }
+        projectRepository.save(project)
     }
 }
