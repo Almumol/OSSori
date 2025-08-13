@@ -1,4 +1,4 @@
-package almumol.ossori.global.config
+package almumol.ossori.core.global.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

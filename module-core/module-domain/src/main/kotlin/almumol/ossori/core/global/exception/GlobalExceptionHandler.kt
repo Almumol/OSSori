@@ -1,4 +1,4 @@
-package com.almumol.ossori.global.exception
+package almumol.ossori.core.global.exception
 
 import com.almumol.ossori.global.exception.dto.ExceptionResponse
 import org.springframework.http.ResponseEntity
