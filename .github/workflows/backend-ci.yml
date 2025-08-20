@@ -12,6 +12,12 @@ on:
     paths-ignore:
       - 'module-frontend/**'
 
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - 'module-frontend/**'
+
 permissions: write-all
 
 jobs:
