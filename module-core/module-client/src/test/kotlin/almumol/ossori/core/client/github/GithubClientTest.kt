@@ -19,7 +19,7 @@ class TestConfig() {
 @TestPropertySource(
     properties = [
         "security.github.repository_base_url=https://api.github.com/repos/",
-        "security.github.search_repository_base_url=https://api.github.com/search/repositories",
+        "security.github.search_base_url=https://api.github.com/search",
         "security.github.token=dummy-token"
     ]
 )

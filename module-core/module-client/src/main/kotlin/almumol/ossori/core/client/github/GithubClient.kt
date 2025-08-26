@@ -24,7 +24,7 @@ class GithubClient(
         get() = LocalDate.now().minusMonths(OFFSET_OF_MONTH).toString()
 
     fun getRepositories(filterQuery: String): GithubRepositoriesResponse {
-        val uri = "${githubClientProperties.searchRepositoryBaseUrl}$filterQuery"
+        val uri = "${githubClientProperties.searchBaseUrl}/repositories$filterQuery"
         return getFromGithub(uri)//?q=good-first-issues:>1+help-wanted-issues:>1
     }
 
