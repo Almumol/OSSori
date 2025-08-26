@@ -1,5 +1,6 @@
 package almumol.ossori.core.client.github
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ExtendWith
@@ -45,5 +46,32 @@ class GithubClientTest(
         assertNotNull(openSourceRepository)
         openSourceRepository = githubClient.getRepositories("?q=help-wanted-issues:>0")
         assertNotNull(openSourceRepository)
+    }
+
+    @Disabled
+    @Test
+    fun searchContentLocationTest() {
+        val contributingLocation = githubClient.getContentLocation("spring-projects", "spring-framework", "CONTRIBUTING.md")
+        //정상적으로 동작하려면 PAT를 사용해야 함
+        assertNotNull(contributingLocation)
+        assertEquals("CONTRIBUTING.md", contributingLocation.items.first().path)
+    }
+
+    @Disabled
+    @Test
+    fun searchContentTest() {
+        val contentResponse = githubClient.getContent("spring-projects", "spring-framework", "CONTRIBUTING.md")
+        assertNotNull(contentResponse)
+        assertEquals("CONTRIBUTING.md", contentResponse.name)
+        assertEquals("CONTRIBUTING.md", contentResponse.path)
+    }
+
+    @Disabled
+    @Test
+    fun getContributingTest() {
+        var contentResponse = githubClient.getContributing("spring-projects", "spring-framework")
+        assertEquals("CONTRIBUTING.md", contentResponse.name)
+        contentResponse = githubClient.getContributing("google", "syzkaller")
+        assertEquals("docs/contributing.md", contentResponse.path)
     }
 }
