@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProjectRepository : JpaRepository<Project, Long> {
-    fun existsProjectByOwner(owner: String): Boolean
+    fun existsProjectByOwnerAndName(owner: String, name: String): Boolean
 }

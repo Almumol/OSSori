@@ -32,8 +32,8 @@ class ProjectService(
     }
 
     fun registerProject(project: Project) {
-        if (projectRepository.existsProjectByOwner(project.owner)) {
-            throw BadRequestException("이미 존재하는 Organization 입니다.")
+        if (projectRepository.existsProjectByOwnerAndName(project.owner, project.name)) {
+            throw BadRequestException("이미 해당 Organization는 동일한 이름의 Repository 정보가 등록되어 있습니다.")
         }
         projectRepository.save(project)
     }
