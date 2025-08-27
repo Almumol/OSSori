@@ -3,7 +3,7 @@ package almumol.ossori.core.domain.project.service
 import almumol.ossori.core.domain.project.domain.Project
 import almumol.ossori.core.domain.project.dto.response.ProjectResponse
 import almumol.ossori.core.domain.project.dto.response.ProjectsResponse
-import almumol.ossori.core.domain.project.global.exception.BadRequestException
+import almumol.ossori.core.domain.project.exception.BadRequestException
 import almumol.ossori.core.domain.project.repository.ProjectRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
