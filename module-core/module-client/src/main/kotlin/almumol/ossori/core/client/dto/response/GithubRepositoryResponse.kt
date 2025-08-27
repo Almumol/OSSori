@@ -6,5 +6,11 @@ data class GithubRepositoryResponse(
     val openIssuesCount: Long,
     val htmlUrl: String,
     val stargazersCount: Long,
-)
+    val owner: GithubOwnerResponse,
+    val description: String?,
+) : SnakeCaseResponse()
 
+data class GithubOwnerResponse(
+    val login: String,
+    val id: Long,
+)
