@@ -2,8 +2,21 @@
 
 : "${GITHUB_OUTPUT:=/dev/null}"
 
-git fetch origin "$1":"$1"
-CHANGED=$(git diff --name-only origin/"$1"...HEAD)
+if [ -z "$1" ]; then
+  echo "Argument for base branch needed"
+  exit 0
+fi
+
+BASE=$1
+
+if git show-ref --verify --quiet refs/remotes/origin/"$BASE"; then
+  git fetch origin "$BASE":"$BASE"
+  DIFF_TARGET="origin/$BASE"
+else
+  DIFF_TARGET="$BASE"
+fi
+
+CHANGED=$(git diff --name-only "$DIFF_TARGET"...HEAD)
 
 MODULES=""
 

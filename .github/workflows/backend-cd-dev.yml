@@ -18,19 +18,24 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check if artifacts exist
+        id: check_artifacts
         run: |
           if [ ! -d "./artifacts" ] || [ -z "$(ls -A ./artifacts)" ]; then
             echo "No artifacts found."
+            echo "has_artifacts=false" >> $GITHUB_OUTPUT
             exit 0
           fi
+          echo "has_artifacts=true" >> $GITHUB_OUTPUT
 
       - name: Download artifacts
+        if: steps.check_artifacts.outputs.has_artifacts == 'true'
         uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
 
       - name: Check downloaded artifacts
+        if: steps.check_artifacts.outputs.has_artifacts == 'true'
         id: check_artifacts
         run: |
           echo "다운로드된 artifact 목록:"
