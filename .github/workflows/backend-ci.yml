@@ -39,7 +39,12 @@ jobs:
 
       - name: extract changed module names
         id: extract
-        run: .github/scripts/extract-changed-modules.sh ${{ github.base_ref }}
+        run: |
+          BASE_REF=${{ github.base_ref }}
+          if [ -z "$BASE_REF" ]; then
+            BASE_REF=${{ github.event.before }}
+          fi
+          .github/scripts/extract-changed-modules.sh $BASE_REF
 
       - name: find targets
         id: target
