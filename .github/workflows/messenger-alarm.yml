@@ -73,10 +73,8 @@ jobs:
         id: run
         run: .github/scripts/message-builder.sh
         env:
-          REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CODE: ${{ secrets.CODE }}
           TYPE: ${{ steps.check.outputs.type }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
           TITLE: ${{ steps.check.outputs.title }}
           BODY: ${{ steps.check.outputs.body }}
           LINK: ${{ steps.check.outputs.link }}
