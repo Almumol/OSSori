@@ -79,3 +79,4 @@ jobs:
           BODY: ${{ steps.check.outputs.body }}
           LINK: ${{ steps.check.outputs.link }}
           UUIDS: ${{ secrets.UUIDS }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
