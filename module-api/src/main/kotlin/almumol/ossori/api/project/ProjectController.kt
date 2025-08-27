@@ -1,4 +1,4 @@
-package almumol.ossori.core.domain.project.controller
+package almumol.ossori.api.project
 
 import almumol.ossori.core.domain.project.dto.response.ProjectResponse
 import almumol.ossori.core.domain.project.dto.response.ProjectsResponse
