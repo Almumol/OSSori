@@ -30,7 +30,7 @@ class GithubProjectCollector(
             // stars:>1000 => 1000개 이상 스타
             // sort=stars&order=desc => 인기순
             val query = String.format("?q=stars:>1000&sort=stars&order=desc&per_page=%d&page=%d", PROJECT_COUNT_PER_REQUEST, page)
-            val response = githubClient!!.getRepositories(query)
+            val response = githubClient.getRepositories(query)
             response.items.forEach { repo ->
                 val project = Project(
                     id = 0L,
