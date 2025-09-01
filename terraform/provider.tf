@@ -13,8 +13,8 @@ resource "aws_key_pair" "terraform_key" {
 }
 
 resource "aws_key_pair" "terraform_key_prod" {
-	key_name = "terraform_key_prod"
-	public_key = file(pathexpand("~/.ssh/ossori_ec2_prod.pub"))
+  key_name = "terraform_key_prod"
+  public_key = file(pathexpand("~/.ssh/ossori_ec2_prod.pub"))
 }
 
 resource "aws_security_group" "terraform_ssh_group" {
