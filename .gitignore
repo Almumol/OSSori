@@ -45,3 +45,9 @@ src/main/resources/application-local.yml
 
 ### QueryDSL ###
 **/src/main/generated
+
+### Terraform ###
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
