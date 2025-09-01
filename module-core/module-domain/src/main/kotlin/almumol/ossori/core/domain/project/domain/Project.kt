@@ -33,6 +33,9 @@ data class Project(
     // CONTRIBUTING.md
     val contributionGuideKey: String? = null,
 
+    // CONTRIBUTING.md SHA
+    val contributionGuideSha: String? = null,
+
     // 이슈 생성 빈도
     @Column(nullable = false)
     val issueFrequency: Double,
@@ -56,4 +59,8 @@ data class Project(
     // PR 최초 응답 시간
     @Column(nullable = false)
     val firstResponseTimeOfPullRequest: Double,
-)
+) {
+    fun hasSameContents(sha: String): Boolean {
+        return this.contributionGuideSha == sha
+    }
+}
