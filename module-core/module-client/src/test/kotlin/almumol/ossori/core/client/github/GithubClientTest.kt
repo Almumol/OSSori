@@ -1,5 +1,6 @@
 package almumol.ossori.core.client.github
 
+import almumol.ossori.core.domain.project.service.ProjectService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Disabled
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import kotlin.test.Test
 
@@ -31,6 +33,9 @@ class GithubClientTest(
     @Autowired
     val githubClient: GithubClient
 ) {
+
+    @MockitoBean
+    lateinit var projectService: ProjectService
 
     @Disabled
     @Test

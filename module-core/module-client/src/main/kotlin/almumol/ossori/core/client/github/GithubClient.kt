@@ -103,7 +103,7 @@ class GithubClient(
         return githubRestClient.get()
             .uri(uri)
             .header(HttpHeaders.ACCEPT, GITHUB_API_MEDIA_TYPE)
-            //.header(AUTHORIZATION_HEADER, getGithubToken())
+            .header(AUTHORIZATION_HEADER, getGithubToken())
             .retrieve()
             .body(T::class.java)
             ?: throw RuntimeException("Null response from $uri")
