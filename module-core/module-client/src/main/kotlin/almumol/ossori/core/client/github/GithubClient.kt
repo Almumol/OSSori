@@ -78,17 +78,17 @@ class GithubClient(
             "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/docs/contributing.md"
         )
 
-        for (uri in uris) {
+        return uris.firstNotNullOfOrNull { uri ->
             try {
-                return getFromGithub(uri)
+                getFromGithub(uri)
             } catch (e: GithubResponseException) {
                 if (e.statusCode != HttpStatus.NOT_FOUND) {
                     throw e
                 }
+                null
             }
-        }
+        } ?: throw GithubResponseException(HttpStatus.NOT_FOUND, "CONTRIBUTING.md not found in repository $repositoryOwner/$repositoryName")
 
-        throw GithubResponseException(HttpStatus.NOT_FOUND, "CONTRIBUTING.md not found in repository $repositoryOwner/$repositoryName")
     }
 
 
