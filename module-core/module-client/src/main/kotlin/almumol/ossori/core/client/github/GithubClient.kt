@@ -69,18 +69,18 @@ class GithubClient(
     }
 
     fun getContributing(repositoryOwner: String, repositoryName: String): GithubContentResponse {
-        val uris = listOf(
-            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/CONTRIBUTING.md",
-            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/.github/CONTRIBUTING.md",
-            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/docs/CONTRIBUTING.md",
-            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/contributing.md",
-            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/.github/contributing.md",
-            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/docs/contributing.md"
+        val paths = listOf(
+            "CONTRIBUTING.md",
+            ".github/CONTRIBUTING.md",
+            "docs/CONTRIBUTING.md",
+            "contributing.md",
+            ".github/contributing.md",
+            "docs/contributing.md"
         )
 
-        return uris.firstNotNullOfOrNull { uri ->
+        return paths.firstNotNullOfOrNull { path ->
             try {
-                getFromGithub(uri)
+                getFromGithub("${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/$path")
             } catch (e: GithubResponseException) {
                 if (e.statusCode != HttpStatus.NOT_FOUND) {
                     throw e
