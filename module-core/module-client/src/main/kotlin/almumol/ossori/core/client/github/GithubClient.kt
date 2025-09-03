@@ -36,7 +36,8 @@ class GithubClient(
     }
 
     fun getPullRequests(repositoryOwner: String, repositoryName: String): List<GithubPullRequestResponse> {
-        val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/pulls?state=all&since=" + since
+        val uri =
+            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/pulls?state=all&since=" + since
         return getFromGithub(uri)
     }
 
@@ -87,7 +88,10 @@ class GithubClient(
                 }
                 null
             }
-        } ?: throw GithubResponseException(HttpStatus.NOT_FOUND, "CONTRIBUTING.md not found in repository $repositoryOwner/$repositoryName")
+        } ?: throw GithubResponseException(
+            HttpStatus.NOT_FOUND,
+            "CONTRIBUTING.md not found in repository $repositoryOwner/$repositoryName"
+        )
 
     }
 
