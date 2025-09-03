@@ -5,7 +5,7 @@ import almumol.ossori.core.domain.project.domain.Project
 data class ProjectResponse(
         val id: Long,
         val name: String,
-        val description: String,
+        val description: String?,
         val githubLink: String,
         val countingStar: Long,
         val issueCount: Long,

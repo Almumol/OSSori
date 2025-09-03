@@ -1,4 +1,4 @@
-package almumol.ossori.core.domain.project.global.exception
+package almumol.ossori.api.exception
 
 data class ExceptionResponse(
         val message: String

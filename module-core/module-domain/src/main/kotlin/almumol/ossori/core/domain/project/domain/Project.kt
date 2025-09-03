@@ -12,12 +12,14 @@ data class Project(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
+    val owner: String,
+
+    @Column(nullable = false)
     val name: String,
 
-    val description: String,
-
-    val owner: String,
+    @Column(columnDefinition = "TEXT")
+    val description: String?,
 
     @Column(nullable = false)
     val githubLink: String,
