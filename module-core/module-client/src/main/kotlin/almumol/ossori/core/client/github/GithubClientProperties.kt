@@ -7,7 +7,7 @@ data class GithubClientProperties(
 
     val repositoryBaseUrl: String,
 
-    val searchRepositoryBaseUrl: String,
+    val searchBaseUrl: String,
 
     val token: String
 ) {

@@ -1,8 +1,10 @@
 package almumol.ossori.core.client.github
 
 import almumol.ossori.core.client.dto.response.*
+import almumol.ossori.core.client.global.exception.GithubResponseException
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import java.time.LocalDate
@@ -24,7 +26,7 @@ class GithubClient(
         get() = LocalDate.now().minusMonths(OFFSET_OF_MONTH).toString()
 
     fun getRepositories(filterQuery: String): GithubRepositoriesResponse {
-        val uri = "${githubClientProperties.searchRepositoryBaseUrl}$filterQuery"
+        val uri = "${githubClientProperties.searchBaseUrl}/repositories$filterQuery"
         return getFromGithub(uri)//?q=good-first-issues:>1+help-wanted-issues:>1
     }
 
@@ -34,7 +36,8 @@ class GithubClient(
     }
 
     fun getPullRequests(repositoryOwner: String, repositoryName: String): List<GithubPullRequestResponse> {
-        val uri = "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/pulls?state=all&since=" + since
+        val uri =
+            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/pulls?state=all&since=" + since
         return getFromGithub(uri)
     }
 
@@ -53,6 +56,46 @@ class GithubClient(
         return getFromGithub(uri)
     }
 
+    //PAT 를 사용해야 정상적으로 동작하고, 사용해도 분 당 10회라는 낮은 사용량이 제공됨
+    fun getContentLocation(repositoryOwner: String, repositoryName: String, content: String): GithubSearchResponse {
+        val filterQuery = "?q=repo:$repositoryOwner/$repositoryName+filename:$content"
+        val uri = "${githubClientProperties.searchBaseUrl}/code$filterQuery"
+        return getFromGithub(uri)
+    }
+
+    fun getContent(repositoryOwner: String, repositoryName: String, contentLocation: String): GithubContentResponse {
+        val uri =
+            "${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/$contentLocation"
+        return getFromGithub(uri)
+    }
+
+    fun getContributing(repositoryOwner: String, repositoryName: String): GithubContentResponse {
+        val paths = listOf(
+            "CONTRIBUTING.md",
+            ".github/CONTRIBUTING.md",
+            "docs/CONTRIBUTING.md",
+            "contributing.md",
+            ".github/contributing.md",
+            "docs/contributing.md"
+        )
+
+        return paths.firstNotNullOfOrNull { path ->
+            try {
+                getFromGithub("${githubClientProperties.repositoryBaseUrl}/$repositoryOwner/$repositoryName/contents/$path")
+            } catch (e: GithubResponseException) {
+                if (e.statusCode != HttpStatus.NOT_FOUND) {
+                    throw e
+                }
+                null
+            }
+        } ?: throw GithubResponseException(
+            HttpStatus.NOT_FOUND,
+            "CONTRIBUTING.md not found in repository $repositoryOwner/$repositoryName"
+        )
+
+    }
+
+
     private fun getGithubToken(): String =
         "$AUTHORIZATION_METHOD ${githubClientProperties.token}"
 
@@ -60,7 +103,7 @@ class GithubClient(
         return githubRestClient.get()
             .uri(uri)
             .header(HttpHeaders.ACCEPT, GITHUB_API_MEDIA_TYPE)
-            //.header(AUTHORIZATION_HEADER, getGithubToken())
+            .header(AUTHORIZATION_HEADER, getGithubToken())
             .retrieve()
             .body(T::class.java)
             ?: throw RuntimeException("Null response from $uri")
