@@ -1,0 +1,3 @@
+[submodule "module-api/src/main/resources/config"]
+	path = module-api/src/main/resources/config
+	url = https://github.com/Almumol/OSSori-secret.git
