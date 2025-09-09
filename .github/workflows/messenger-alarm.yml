@@ -1,0 +1,82 @@
+name: Messenger Alarm about Github Events
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+  issue_comment:
+    types: [created]
+  issues:
+    types: [opened, closed]
+  pull_request_review:
+    types: [submitted]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  message:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Github Event Type
+        id: check
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            TYPE="PR"
+            TITLE="${{ github.event.pull_request.title }}"
+            BODY="${{ github.event.pull_request.body }}"
+            LINK="${{ github.event.pull_request.html_url }}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "issues" ]]; then
+            TYPE="ISSUE"
+            TITLE="${{ github.event.issue.title }}"
+            BODY="${{ github.event.issue.body }}"
+            LINK="${{ github.event.issue.html_url }}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "issue_comment" ]]; then
+            TYPE="COMMENT"
+            TITLE="${{ github.event.issue.title }}"
+            BODY="${{ github.event.comment.body }}"
+            LINK="${{ github.event.comment.html_url }}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request_review" ]]; then
+            TYPE="COMMENT"
+            TITLE="${{ github.event.pull_request.title }}"
+            BODY="${{ github.event.review.body }}"
+            LINK="${{ github.event.pull_request.html_url }}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request_review_comment" ]]; then
+            TYPE="COMMENT"
+            TITLE="${{ github.event.pull_request.title }}"
+            BODY="${{ github.event.comment.body }}"
+            LINK="${{ github.event.comment.html_url }}"
+          else
+            TYPE="UNKNOWN"
+            TITLE="UNKNOWN"
+            BODY="UNKNOWN"
+            LINK="UNKNOWN"
+          fi
+          
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+          echo "title<<EOF" >> $GITHUB_OUTPUT
+          echo "$TITLE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "link<<EOF" >> $GITHUB_OUTPUT
+          echo "$LINK" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Grant permission to script
+        run: chmod +x .github/scripts/message-builder.sh
+
+      - name: Run message builder
+        id: run
+        run: .github/scripts/message-builder.sh
+        env:
+          TYPE: ${{ steps.check.outputs.type }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          TITLE: ${{ steps.check.outputs.title }}
+          BODY: ${{ steps.check.outputs.body }}
+          LINK: ${{ steps.check.outputs.link }}
+          UUIDS: ${{ secrets.UUIDS }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
