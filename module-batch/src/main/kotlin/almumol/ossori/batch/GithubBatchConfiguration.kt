@@ -23,7 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager
 class GithubBatchConfiguration(
     val githubClient: GithubClient,
     val githubMetricsCalculator: GithubMetricsCalculator,
-    val githubReadMeSender: GithubReadMeSender,
+    val githubDocsSender: GithubDocsSender,
     val batchExecutionListener: BatchExecutionListener
 ) {
 
@@ -56,7 +56,7 @@ class GithubBatchConfiguration(
 
     @Bean
     fun projectItemProcessor(): ItemProcessor<Project, Project> {
-        return GithubProjectItemProcessor(githubClient, githubMetricsCalculator, githubReadMeSender)
+        return GithubProjectItemProcessor(githubClient, githubMetricsCalculator, githubDocsSender)
     }
 
     @Bean

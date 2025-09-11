@@ -56,8 +56,8 @@ class GithubClient(
         return getFromGithub(uri)
     }
 
-    //PAT 를 사용해야 정상적으로 동작하고, 사용해도 분 당 10회라는 낮은 사용량이 제공됨
-    fun getContentLocation(repositoryOwner: String, repositoryName: String, content: String): GithubSearchResponse {
+    // TODO: 분 당 10회라는 낮은 사용량 -> PAT 여러개 두고 rotation 으로 돌려쓰는 전략 필요
+    fun getContentLocation(repositoryOwner: String, repositoryName: String, content: String): GithubSearchContentResponse {
         val filterQuery = "?q=repo:$repositoryOwner/$repositoryName+filename:$content"
         val uri = "${githubClientProperties.searchBaseUrl}/code$filterQuery"
         return getFromGithub(uri)
