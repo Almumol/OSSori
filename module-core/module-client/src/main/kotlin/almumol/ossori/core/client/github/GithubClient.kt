@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import java.time.LocalDate
+import java.util.Base64
 
 @Component
 @EnableConfigurationProperties(GithubClientProperties::class)
@@ -19,7 +20,7 @@ class GithubClient(
         private const val GITHUB_API_MEDIA_TYPE = "application/vnd.github+json"
         private const val AUTHORIZATION_HEADER = "Authorization"
         private const val AUTHORIZATION_METHOD = "Bearer"
-        private const val OFFSET_OF_MONTH = 3L;
+        private const val OFFSET_OF_MONTH = 3L
     }
 
     private val since: String
@@ -69,7 +70,7 @@ class GithubClient(
         return getFromGithub(uri)
     }
 
-    fun getContributing(repositoryOwner: String, repositoryName: String): GithubContentResponse {
+    fun getContributionGuideByContent(repositoryOwner: String, repositoryName: String): GithubContentResponse {
         val paths = listOf(
             "CONTRIBUTING.md",
             ".github/CONTRIBUTING.md",
@@ -92,9 +93,32 @@ class GithubClient(
             HttpStatus.NOT_FOUND,
             "CONTRIBUTING.md not found in repository $repositoryOwner/$repositoryName"
         )
-
     }
 
+    private fun decodeContent(content: String?): String {
+        val filtered = content?.replace("\n", "")
+        return String(Base64.getDecoder().decode(filtered))
+    }
+
+    fun getContributionGuide(repositoryOwner: String, repositoryName: String): GithubContentResponse? {
+        val searchResult = getContentLocation(repositoryOwner, repositoryName, "CONTRIBUTING.md")
+        val contributionGuidePattern = Regex("^(CONTRIBUTING\\.md|\\.github/CONTRIBUTING\\.md|docs/CONTRIBUTING\\.md)$", RegexOption.IGNORE_CASE)
+        val contributionGuidePaths = searchResult.items.filter { item ->
+            contributionGuidePattern.matches(item.path)
+        }
+        return contributionGuidePaths.firstNotNullOfOrNull { item ->
+            val contributionGuide = getContent(repositoryOwner, repositoryName, item.path)
+            return GithubContentResponse(
+                contributionGuide.name,
+                contributionGuide.path,
+                contributionGuide.sha,
+                contributionGuide.size,
+                contributionGuide.downloadUrl,
+                decodeContent(contributionGuide.content),
+                contributionGuide.encoding
+            )
+        }
+    }
 
     private fun getGithubToken(): String =
         "$AUTHORIZATION_METHOD ${githubClientProperties.token}"
