@@ -9,16 +9,60 @@ on:
       - opened
       - synchronize
       - reopened
+    paths-ignore:
+      - 'module-frontend/**'
+
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - 'module-frontend/**'
 
 permissions: write-all
 
 jobs:
+  detach:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.extract.outputs.modules }}
+      candidates: ${{ steps.target.outputs.candidates }}
+      executables: ${{ steps.target.outputs.executables }}
+
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/*.sh
+
+      - name: extract changed module names
+        id: extract
+        run: |
+          BASE_REF=${{ github.base_ref }}
+          if [ -z "$BASE_REF" ]; then
+            BASE_REF=${{ github.event.before }}
+          fi
+          .github/scripts/extract-changed-modules.sh $BASE_REF
+
+      - name: find targets
+        id: target
+        run: .github/scripts/find-dependant-modules.sh ${{ steps.extract.outputs.modules }}
+
   build:
+    needs: detach
+    if: ${{ needs.detach.outputs.candidates && needs.detach.outputs.candidates != '[]' }}
+    strategy:
+      matrix:
+        module: ${{ fromJSON(needs.detach.outputs.candidates) }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Repository checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup java 21
         uses: actions/setup-java@v4
@@ -40,16 +84,41 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and test with gradle
-        run: ./gradlew build --info
+        if: ${{ matrix.module != '' }}
+        run: ./gradlew :${{ matrix.module }}:build --info
 
-      - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+      - name: Save build files if executable modules
+        if: contains(fromJSON(needs.detach.outputs.executables), matrix.module)
+        uses: actions/upload-artifact@v4
         with:
-          files: ${{ github.workspace }}/build/test-results/test/TEST-*.xml
+          name: artifact-${{ matrix.module }}
+          path: ${{ matrix.module }}/build/libs/*.jar
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.module }}
+          path: ${{ matrix.module }}/build/test-results/test/
+
+  report:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-results
+          merge-multiple: true
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v4
-        if: always()
         with:
-          report_paths: ${{ github.workspace }}/build/test-results/test/TEST-*.xml
+          report_paths: test-results/**/TEST-*.xml
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: test-results/**/TEST-*.xml

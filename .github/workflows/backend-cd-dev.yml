@@ -1,39 +1,48 @@
 name: backend CD dev
 
 on:
-  push:
+  workflow_run:
+    workflows: [backend CI]
+    types: [completed]
     branches:
-      - develop
+      - 'develop'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.image.outputs.images }}
 
     steps:
       - name: Repository checkout
         uses: actions/checkout@v4
 
-      - name: Setup java 21
-        uses: actions/setup-java@v4
+      - name: Check if artifacts exist
+        id: check_artifacts_exist
+        run: |
+          if [ ! -d "./artifacts" ] || [ -z "$(ls -A ./artifacts)" ]; then
+            echo "No artifacts found."
+            echo "has_artifacts=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "has_artifacts=true" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        if: steps.check_artifacts_exist.outputs.has_artifacts == 'true'
+        uses: actions/download-artifact@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          path: artifacts
+          merge-multiple: true
 
-      - name: Cache gradle
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Grant permission to gradlew
-        run: chmod +x gradlew
-
-      - name: Build and test with gradle
-        run: ./gradlew clean build
+      - name: Check downloaded artifacts
+        if: steps.check_artifacts_exist.outputs.has_artifacts == 'true'
+        id: check_artifacts
+        run: |
+          echo "다운로드된 artifact 목록:"
+          ls artifacts
+          MODULES=$(ls artifacts | grep '^artifact-')
+          MODULES=$(echo "$MODULES" | sed 's/^artifact-//')
+          echo "modules=$MODULES" >> $GITHUB_OUTPUT
 
       - name: Sign in Dockerhub
         uses: docker/login-action@v1
@@ -41,19 +50,27 @@ jobs:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
 
-      - name: Build the Docker image
-        run: docker build -f ./Dockerfile --platform linux/arm64 --no-cache -t ossori/ossori:dev .
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/*.sh
 
-      - name: Push the Docker Image to Dockerhub
-        run: docker push ossori/ossori:dev
+      - name: Build and push the Docker Image
+        id: image
+        run: .github/scripts/build-docker-images.sh ${{ steps.check_artifacts.outputs.modules }}
 
   deploy:
     needs: build
     runs-on: [ self-hosted ]
 
     steps:
-      - name: Pull docker image
-        run: sudo docker pull ossori/ossori:dev
-
-      - name: Docker compose up
-        run: sudo docker compose -f ~/docker/ossori-dev-compose.yml up -d
+      - name: Pull docker image and compose up
+        run: |
+          for image in $(echo "${{ needs.build.outputs.images }}" | tr ',' ' ')
+          do
+            sudo docker pull $image
+            name_with_registry="${image%%:*}"
+            name_with_prefix="${name_with_registry##*/}"
+            module_name="${name_with_prefix#ossori-}"
+            container_name="ossori-dev-${module_name}"
+            sudo docker rm -f "$container_name" || true
+            sudo docker compose -f ~/docker/"$module_name"/docker-compose-dev.yml up -d
+          done

@@ -1,0 +1,28 @@
+package almumol.ossori.api.project
+
+import almumol.ossori.core.domain.project.dto.response.ProjectResponse
+import almumol.ossori.core.domain.project.dto.response.ProjectsResponse
+import almumol.ossori.core.domain.project.service.ProjectService
+import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/projects")
+class ProjectController(
+    private val projectService: ProjectService
+) {
+
+    @GetMapping("/")
+    fun findAllProjects(@PageableDefault pageable: Pageable): ProjectsResponse =
+        projectService.findAllProjects(pageable)
+
+    @GetMapping("/{id}")
+    fun findProject(@PathVariable id: Long): ProjectResponse =
+        projectService.findProjectById(id)
+}
