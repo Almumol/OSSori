@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class GithubProjectItemProcessor(
     private val githubClient: GithubClient,
     private val githubMetricsCalculator: GithubMetricsCalculator,
-    private val githubReadMeSender: GithubReadMeSender
+    private val githubDocsSender: GithubDocsSender,
 ) : ItemProcessor<Project, Project> {
 
     override fun process(previousProject: Project): Project? {
@@ -18,15 +18,15 @@ class GithubProjectItemProcessor(
         val pullRequests = githubClient.getPullRequests(previousProject.owner, previousProject.name)
         val contributors = githubClient.getContributors(previousProject.owner, previousProject.name)
         val repositorySummary = githubClient.getRepository(previousProject.owner, previousProject.name)
-        val readMe = githubClient.getReadMe(previousProject.owner, previousProject.name)
-
-        val contributionGuideKey = githubReadMeSender.saveToBucket(readMe)
+        val contributionGuide = githubClient.getContributionGuide(previousProject.owner, previousProject.name)
+        val contributionGuideKey = contributionGuide?.let {githubDocsSender.saveToBucket(previousProject, it)}
         val calculatedMetrics = githubMetricsCalculator.calculateMetrics(repositorySummary, commits, pullRequests, contributors)
 
         return previousProject.copy(
             countingStar = repositorySummary.stargazersCount,
             issueCount = repositorySummary.openIssuesCount,
             contributionGuideKey = contributionGuideKey,
+            contributionGuideSha = contributionGuide?.sha,
             issueFrequency = calculatedMetrics.issueCreationRate,
             timeToMerge = calculatedMetrics.averageMergeTime,
             pullRequestFrequency = calculatedMetrics.pullRequestCreationRate,

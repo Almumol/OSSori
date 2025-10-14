@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import kotlin.test.Test
+import kotlin.test.assertNull
 
 @TestConfiguration
 @ComponentScan(basePackages = ["almumol.ossori.core.client"])
@@ -23,7 +24,10 @@ class TestConfig() {
     properties = [
         "security.github.repository_base_url=https://api.github.com/repos/",
         "security.github.search_base_url=https://api.github.com/search",
-        "security.github.token=dummy-token"
+        "security.github.token=test-pat",
+        "cloud.aws.credentials.access-key=access-key",
+        "cloud.aws.credentials.secret-access-key=secret-access-key",
+        "cloud.aws.s3.bucket-name=ossori"
     ]
 )
 @ExtendWith(SpringExtension::class)
@@ -73,10 +77,20 @@ class GithubClientTest(
 
     @Disabled
     @Test
-    fun getContributingTest() {
-        var contentResponse = githubClient.getContributing("spring-projects", "spring-framework")
+    fun getContributionGuideByContentTest() {
+        var contentResponse = githubClient.getContributionGuideByContent("spring-projects", "spring-framework")
         assertEquals("CONTRIBUTING.md", contentResponse.name)
-        contentResponse = githubClient.getContributing("google", "syzkaller")
+        contentResponse = githubClient.getContributionGuideByContent("google", "syzkaller")
         assertEquals("docs/contributing.md", contentResponse.path)
+    }
+
+    @Disabled
+    @Test
+    fun getContributionGuideTest() {
+        //정상적으로 동작하려면 PAT를 사용해야 함
+        assertNull(githubClient.getContributionGuide("Almumol", "OSSori"))
+        val result = githubClient.getContributionGuide("google", "syzkaller")
+        // google/syzkaller 엔 CONTRIBUTING.md 가 2개 존재함 -> docs/contributing.md 와 docs/translations/zh_CN/contributing.md
+        assertEquals("docs/contributing.md", result!!.path)
     }
 }

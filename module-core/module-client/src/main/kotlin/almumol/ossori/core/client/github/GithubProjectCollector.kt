@@ -1,5 +1,6 @@
 package almumol.ossori.core.client.github
 
+import almumol.ossori.core.client.aws.S3DocsClient
 import almumol.ossori.core.domain.project.domain.Project
 import almumol.ossori.core.domain.project.service.ProjectService
 import jakarta.annotation.PostConstruct
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component
 class GithubProjectCollector(
     private val githubClient: GithubClient,
     private val projectService: ProjectService,
+    private val s3DocsClient: S3DocsClient,
 ) {
     companion object {
         private const val TOTAL_DUMMY_PROJECT_COUNT: Long = 300L
@@ -32,6 +34,7 @@ class GithubProjectCollector(
             val query = String.format("?q=stars:>1000&sort=stars&order=desc&per_page=%d&page=%d", PROJECT_COUNT_PER_REQUEST, page)
             val response = githubClient.getRepositories(query)
             response.items.forEach { repo ->
+                val contributionGuide = githubClient.getContributionGuide(repo.owner.login, repo.name)
                 val project = Project(
                     id = 0L,
                     name = repo.name,
@@ -40,7 +43,8 @@ class GithubProjectCollector(
                     githubLink = repo.htmlUrl,
                     countingStar = repo.stargazersCount,
                     issueCount = repo.openIssuesCount,
-                    contributionGuideKey = null,
+                    contributionGuideKey = contributionGuide?.let { s3DocsClient.updateToS3(repo.owner.login, repo.name, it.name, it.content)},
+                    contributionGuideSha = contributionGuide?.sha,
                     issueFrequency = 0.0,
                     timeToMerge = 0.0,
                     pullRequestFrequency = 0.0,

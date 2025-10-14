@@ -6,6 +6,6 @@ data class GithubContentResponse (
     val sha: String,
     val size: Long,
     val downloadUrl: String?,
-    val content: String?,
+    val content: String,
     val encoding: String?,
 )
