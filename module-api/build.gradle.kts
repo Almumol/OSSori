@@ -18,15 +18,6 @@ dependencies {
     implementation ("com.h2database:h2")
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDir(project(":module-core:module-client").file("src/main/resources"))
-        }
-    }
-}
-
-
 tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
     mainClass.set("OssoriApplication")
 }
